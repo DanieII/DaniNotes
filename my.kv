@@ -1,0 +1,145 @@
+<CreateWindow>:
+    name: "create"
+
+    create_name: name
+    create_password: password
+
+    FloatLayout:
+
+
+        Label:
+            pos_hint:{"x":0.3,"y":0.75}
+            size_hint: 0.4, 0.1
+            font_size: 20
+            text: "Create an account"
+            color: 0.3,0.3,0.3,1
+            canvas.before:
+                Color:
+                    rgba: 0.6,0.9,0.7,1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+        Label:
+            pos_hint:{"x":0,"top":0.7}
+            size_hint: 0.4, 0.1
+            font_size: 20
+            text:"Name"
+            color: 0.3,0.3,0.3,1
+            canvas.before:
+                Color:
+                    rgba: 0.6,0.9,0.7,1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+        TextInput:
+            pos_hint: {"x":0.3, "top":0.7}
+            size_hint: 0.4, 0.12
+            id: name
+            multiline: False
+
+        Label:
+            pos_hint:{"x":0,"top":0.5}
+            size_hint: 0.4, 0.1
+            font_size: 20
+            text:"Password"
+            color: 0.3,0.3,0.3,1
+            canvas.before:
+                Color:
+                    rgba: 0.6,0.9,0.7,1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+        TextInput:
+            pos_hint: {"x":0.3, "top":0.5}
+            size_hint: 0.4, 0.12
+            id: password
+            multiline: False
+            password: True
+
+        Button:
+            pos_hint:{"x":0.3,"y":0.15}
+            size_hint: 0.4, 0.1
+            font_size: 20
+            text: "Register"
+            on_release:
+                root.manager.transition.direction = "left"
+                root.submit_info()
+
+        Button:
+            pos_hint:{"x":0.3,"y":0.02}
+            size_hint: 0.4, 0.1
+            font_size: 20
+            text: "Go Back"
+            on_release:
+                root.manager.transition.direction = "down"
+                root.login_transition()
+
+
+<LoginWindow>:
+    name: "login"
+
+    login_name: name
+    login_password: password
+
+    FloatLayout:
+        Image:
+            source: "cooltext426672370115326.png"
+            pos_hint:{"x":0,"y":0.35}
+        Label:
+            pos_hint:{"x":0,"top":0.7}
+            size_hint: 0.4, 0.1
+            font_size: 20
+            text:"Name"
+            color: 0.3,0.3,0.3,1
+            canvas.before:
+                Color:
+                    rgba: 0.6,0.9,0.7,1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+        TextInput:
+            pos_hint: {"x":0.3, "top":0.7}
+            size_hint: 0.4, 0.12
+            id: name
+            multiline: False
+
+        Label:
+            pos_hint:{"x":0,"top":0.5}
+            size_hint: 0.4, 0.1
+            font_size: 20
+            text:"Password"
+            color: 0.3,0.3,0.3,1
+            canvas.before:
+                Color:
+                    rgba: 0.6,0.9,0.7,1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+        TextInput:
+            pos_hint: {"x":0.3, "top":0.5}
+            size_hint: 0.4, 0.12
+            id: password
+            multiline: False
+            password: True
+
+        Button:
+            pos_hint:{"x":0.3,"y":0.15}
+            size_hint: 0.4, 0.1
+            font_size: 20
+            text: "Login"
+            on_release:
+                root.manager.transition.direction = "down"
+
+        Button:
+            pos_hint:{"x":0.3,"y":0.02}
+            size_hint: 0.4, 0.1
+            font_size: 20
+            text: "Create an account"
+            on_release:
+                root.manager.transition.direction = "up"
+                root.create_transition()

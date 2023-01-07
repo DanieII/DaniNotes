@@ -1,6 +1,4 @@
 <CreateWindow>:
-    name: "create"
-
     create_name: name
     create_password: password
 
@@ -10,28 +8,19 @@
         Label:
             pos_hint:{"x":0.3,"y":0.75}
             size_hint: 0.4, 0.1
+            bold: True
             font_size: 20
             text: "Create an account"
             color: 0.3,0.3,0.3,1
-            canvas.before:
-                Color:
-                    rgba: 0.6,0.9,0.7,1
-                Rectangle:
-                    pos: self.pos
-                    size: self.size
 
         Label:
             pos_hint:{"x":0,"top":0.7}
             size_hint: 0.4, 0.1
             font_size: 20
+            bold: True
+            italic: True
             text:"Name"
             color: 0.3,0.3,0.3,1
-            canvas.before:
-                Color:
-                    rgba: 0.6,0.9,0.7,1
-                Rectangle:
-                    pos: self.pos
-                    size: self.size
 
         TextInput:
             pos_hint: {"x":0.3, "top":0.7}
@@ -43,14 +32,10 @@
             pos_hint:{"x":0,"top":0.5}
             size_hint: 0.4, 0.1
             font_size: 20
+            bold: True
+            italic: True
             text:"Password"
             color: 0.3,0.3,0.3,1
-            canvas.before:
-                Color:
-                    rgba: 0.6,0.9,0.7,1
-                Rectangle:
-                    pos: self.pos
-                    size: self.size
 
         TextInput:
             pos_hint: {"x":0.3, "top":0.5}
@@ -79,27 +64,22 @@
 
 
 <LoginWindow>:
-    name: "login"
-
     login_name: name
     login_password: password
 
     FloatLayout:
         Image:
-            source: "cooltext426672370115326.png"
-            pos_hint:{"x":0,"y":0.35}
+            source: "hjga.png"
+            pos_hint:{"x":-0.02,"y":0.35}
+
         Label:
             pos_hint:{"x":0,"top":0.7}
             size_hint: 0.4, 0.1
             font_size: 20
+            bold: True
+            italic: True
             text:"Name"
             color: 0.3,0.3,0.3,1
-            canvas.before:
-                Color:
-                    rgba: 0.6,0.9,0.7,1
-                Rectangle:
-                    pos: self.pos
-                    size: self.size
 
         TextInput:
             pos_hint: {"x":0.3, "top":0.7}
@@ -111,14 +91,10 @@
             pos_hint:{"x":0,"top":0.5}
             size_hint: 0.4, 0.1
             font_size: 20
+            bold: True
+            italic: True
             text:"Password"
             color: 0.3,0.3,0.3,1
-            canvas.before:
-                Color:
-                    rgba: 0.6,0.9,0.7,1
-                Rectangle:
-                    pos: self.pos
-                    size: self.size
 
         TextInput:
             pos_hint: {"x":0.3, "top":0.5}
@@ -131,9 +107,10 @@
             pos_hint:{"x":0.3,"y":0.15}
             size_hint: 0.4, 0.1
             font_size: 20
-            text: "Login"
+            text: "Log In"
             on_release:
                 root.manager.transition.direction = "down"
+                root.submit_info()
 
         Button:
             pos_hint:{"x":0.3,"y":0.02}
@@ -143,3 +120,75 @@
             on_release:
                 root.manager.transition.direction = "up"
                 root.create_transition()
+
+
+<AddNote>:
+    title: title
+    text: text
+
+    GridLayout:
+        rows: 3
+        GridLayout:
+            rows: 2
+            Label:
+                font_size: 25
+                color: 0.3,0.3,0.3,1
+                text: "Note Title"
+            TextInput:
+                multiline: False
+                id: title
+            Label:
+                font_size: 25
+                color: 0.3,0.3,0.3,1
+                text: "Text"
+            TextInput:
+                id: text
+        Button:
+            size_hint: 1, 0.3
+            text: "Save"
+            on_release:
+                root.add_note()
+                root.manager.transition.direction = "up"
+                root.main_transition()
+        Button:
+            size_hint: 1, 0.3
+            text: "Cancel"
+            on_release:
+                root.manager.transition.direction = "up"
+                root.main_transition()
+
+
+<MainWindow>:
+    scroll: scroll
+
+    GridLayout:
+        rows: 2
+        spacing: 10
+        BoxLayout:
+            orientation: "vertical"
+            Button:
+                size_hint_y: 0.15
+                pos_hint:{'top':1}
+                text: "Add Note"
+                on_release:
+                    root.manager.transition.direction = "down"
+                    root.add_note_transition()
+            ScrollView:
+                do_scroll_x: False
+                do_scroll_y: True
+                BoxLayout:
+                    orientation: "vertical"
+                    size_hint_y: None
+                    padding: 10, 10
+                    id: scroll
+        Button:
+            size_hint_y: 0.15
+            text: "Log Out"
+            on_release:
+                root.manager.transition.direction = "up"
+                root.logout()
+        Button:
+            size_hint_y: 0.15
+            text: "Delete Account"
+            on_release:
+                root.delete_account()

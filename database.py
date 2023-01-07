@@ -1,46 +1,42 @@
+import sqlite3
 import sqlite3 as sql
 
 
 class Database:
+    def __init__(self):
+        self.connection = sql.connect("my_database.db")
+        self.cursor = self.connection.cursor()
+
     def create_tables(self):
-        conn = sql.connect("my_database.db")
-        c = conn.cursor()
-        c.execute("""CREATE TABLE if not exists users (
+        self.cursor.execute("""CREATE TABLE if not exists users (
                             userid INTEGER PRIMARY KEY AUTOINCREMENT,
-                            username TEXT,
+                            username TEXT UNIQUE,
                             password TEXT
                             )""")
-        # c.execute("""CREATE TABLE if not exists notes (
-        #                     noteID integer AUTOINCREMENT,
-        #                     userID TEXT,
-        #                     PRIMARY KEY(noteID),
-        #                     FOREIGN KEY(userID) REFERENCES users(noteID)
+        # self.cursor.execute("""CREATE TABLE if not exists notes (
+        #                     noteid INTEGER PRIMARY KEY AUTOINCREMENT,
+        #                     userid TEXT REFERENCES users(userid),
+        #                     note_title TEXT,
+        #                     note_data TEXT
         #                     )""")
-        # c.execute("""CREATE TABLE if not exists notes_data (
-        #                         dataID integer AUTOINCREMENT,
-        #                         noteID integer,
-        #                         PRIMARY KEY(dataID),
-        #                         FOREIGN KEY(noteID) REFERENCES notes(noteID)
-        #                         )""")
         # c.execute("SELECT * FROM users")
         # result = c.fetchall()
         # print(result)
-        conn.commit()
-        conn.close()
+        self.connection.commit()
+
+    def get_user_data(self, username):
+        current_data = self.cursor.execute("SELECT * FROM users WHERE username=?", (username,))
+        return current_data
 
     def add_user(self, user, password):
-        conn = sql.connect("my_database.db")
-        c = conn.cursor()
-
-        c.execute("""INSERT INTO users(username,password)
-                        VALUES(?,?)""", (user, password))
-        conn.commit()
-        conn.close()
+        try:
+            self.cursor.execute("""INSERT INTO users(username,password)
+                                    VALUES(?,?)""", (user, password))
+            self.connection.commit()
+        except sqlite3.IntegrityError:
+            return False
+        return True
 
     def delete_users(self, user_to_delete):
-        conn = sql.connect("my_database.db")
-        c = conn.cursor()
-
-        c.execute("""DELETE FROM users WHERE username=?""", (user_to_delete,))
-        conn.commit()
-        conn.close()
+        self.cursor.execute("""DELETE FROM users WHERE username=?""", (user_to_delete,))
+        self.connection.commit()

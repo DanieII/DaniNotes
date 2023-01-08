@@ -9,7 +9,7 @@
             pos_hint:{"x":0.3,"y":0.75}
             size_hint: 0.4, 0.1
             bold: True
-            font_size: 20
+            font_size: 25
             text: "Create an account"
             color: 0.3,0.3,0.3,1
 
@@ -133,7 +133,7 @@
             Label:
                 font_size: 25
                 color: 0.3,0.3,0.3,1
-                text: "Note Title"
+                text: "Title"
             TextInput:
                 multiline: False
                 id: title
@@ -147,7 +147,7 @@
             size_hint: 1, 0.3
             text: "Save"
             on_release:
-                root.add_note()
+                root.add_note_to_database()
                 root.manager.transition.direction = "up"
                 root.main_transition()
         Button:
@@ -162,24 +162,31 @@
     scroll: scroll
 
     GridLayout:
-        rows: 2
-        spacing: 10
+        rows: 3
+        spacing: 3
         BoxLayout:
             orientation: "vertical"
             Button:
                 size_hint_y: 0.15
-                pos_hint:{'top':1}
                 text: "Add Note"
                 on_release:
                     root.manager.transition.direction = "down"
                     root.add_note_transition()
+            Button:
+                size_hint_y: 0.15
+                text: "Refresh"
+                on_release:
+                    root.show_notes()
             ScrollView:
                 do_scroll_x: False
                 do_scroll_y: True
-                BoxLayout:
-                    orientation: "vertical"
+                GridLayout:
                     size_hint_y: None
-                    padding: 10, 10
+                    cols: 1
+                    row_default_height: '50dp'
+                    row_force_default: True
+                    spacing: 0, 0
+                    padding: 0, 10
                     id: scroll
         Button:
             size_hint_y: 0.15

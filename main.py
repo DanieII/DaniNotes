@@ -5,6 +5,7 @@ from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.textinput import TextInput
 from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import ObjectProperty
 from kivy.core.window import Window
@@ -14,8 +15,8 @@ from database import Database
 import re
 
 db_functions = Database()
+current_id = ""
 current_name = ""
-current_password = ""
 
 
 class CreateWindow(Screen):
@@ -59,9 +60,8 @@ class LoginWindow(Screen):
             if result_for_the_given_name:
                 if password.text == result_for_the_given_name[0][2]:
                     m.current = "main"
-                    self.login_name.text = ""
-                    self.login_password.text = ""
-                    global current_name, current_password
+                    self.login_name.text, self.login_password.text = "", ""
+                    global current_id, current_name
                     current_id, current_name = result_for_the_given_name[0][:2]
                 else:
                     show_popup("Error",
@@ -79,37 +79,92 @@ class AddNote(Screen):
     text = ObjectProperty(None)
 
     def add_note_to_database(self):
-        pass
-
-    def add_note(self):
-        self.manager.get_screen('main').ids.scroll.add_widget(Button(text="test"))
+        title, text = self.title.text, self.text.text
+        if title != "" and text != "":
+            db_functions.add_note(current_id, title, text)
+            self.title.text, self.text.text = "", ""
+        else:
+            show_popup("Error",
+                       "Make sure to fill every text field")
 
     def main_transition(self):
         m.current = "main"
 
 
+already_loaded_notes_ids = list()
+
+
 class MainWindow(Screen):
+
+    def show_notes(self):
+        remove_widgets()
+        self.all_user_notes = list(db_functions.get_user_notes(current_id))
+        if self.all_user_notes:
+            for index in range(len(self.all_user_notes)):
+                title = self.all_user_notes[index][2]
+                note_id = self.all_user_notes[index][0]
+                text = self.all_user_notes[index][3]
+                if note_id not in already_loaded_notes_ids:
+                    button = Button(text=title,
+                                    on_release=lambda x: self.see_and_edit_note(title, note_id, text),
+                                    background_color=[0.8, 1, 1, 1])
+                    self.ids.scroll.add_widget(button)
+                    already_loaded_notes_ids.append(note_id)
+                    self.ids[index] = button
+        else:
+            show_popup("Error",
+                       "No notes to show")
+
+    def see_and_edit_note(self, title, note_id, text):
+        content = BoxLayout(orientation="vertical")
+        new_text = TextInput(text=text)
+        content.add_widget(new_text)
+        popup = Popup(title=title, title_size=30,
+                      title_align='center', content=content,
+                      size_hint=(None, None), size=(400, 400))
+        content.add_widget(
+            Button(text="Save changes",
+                   on_press=lambda x: db_functions.edit_note(note_id, new_text.text),
+                   on_release=popup.dismiss))
+        content.add_widget(Button(text="Go back", on_release=popup.dismiss))
+        popup.open()
 
     def add_note_transition(self):
         m.current = "add_note"
 
     def logout(self):
         m.current = "login"
+        remove_widgets()
 
     def delete_account(self):
         content = BoxLayout(orientation="vertical")
         content.add_widget(Label(text="Are you sure you want to delete this account?\nThis action is permanent!!!"))
-
-        popup = Popup(title='Confirmation', title_size=(30),
+        popup = Popup(title='Confirmation', title_size=30,
                       title_align='center', content=content,
                       size_hint=(None, None), size=(400, 400))
-        content.add_widget(Button(text="yes"))
+        content.add_widget(Button(text="yes", on_release=lambda x: do_it(popup)))
         content.add_widget(Button(text="no", on_release=popup.dismiss))
         popup.open()
+        remove_widgets()
+
+
+def do_it(popup):
+    popup.dismiss()
+    db_functions.delete_user(current_id)
+    db_functions.delete_notes(current_id)
+    m.transition.direction = "up"
+    m.current = "login"
+
+
+def remove_widgets():
+    already_loaded_notes_ids.clear()
+    for child in m.get_screen("main").children[0].children[2].children[0].children[0].children[:]:
+        m.get_screen("main").children[0].children[2].children[0].children[0].remove_widget(child)
 
 
 def show_popup(title, content):
-    popup = Popup(title=title, content=Label(text=content), size_hint=(None, None), size=(400, 400))
+    popup = Popup(title=title, content=Label(text=content), title_size=30,
+                  title_align='center', size_hint=(None, None), size=(400, 400))
     popup.open()
 
 
@@ -131,8 +186,6 @@ m = Manager()
 
 screens = [LoginWindow(name="login"), CreateWindow(name="create"), MainWindow(name="main"), AddNote(name="add_note")]
 [m.add_widget(screen) for screen in screens]
-
-# m.current = "main"
 
 
 class MyMainApp(App):

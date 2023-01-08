@@ -13,20 +13,30 @@ class Database:
                             username TEXT UNIQUE,
                             password TEXT
                             )""")
-        # self.cursor.execute("""CREATE TABLE if not exists notes (
-        #                     noteid INTEGER PRIMARY KEY AUTOINCREMENT,
-        #                     userid TEXT REFERENCES users(userid),
-        #                     note_title TEXT,
-        #                     note_data TEXT
-        #                     )""")
-        # c.execute("SELECT * FROM users")
-        # result = c.fetchall()
-        # print(result)
+        self.cursor.execute("""CREATE TABLE if not exists notes (
+                            noteid INTEGER PRIMARY KEY AUTOINCREMENT ,
+                            userid INTEGER,
+                            note_title TEXT,
+                            note_data TEXT
+                            )""")
         self.connection.commit()
 
     def get_user_data(self, username):
         current_data = self.cursor.execute("SELECT * FROM users WHERE username=?", (username,))
         return current_data
+
+    def get_user_notes(self, userid):
+        current_notes = self.cursor.execute("SELECT * FROM notes WHERE userid=?", (userid,))
+        return current_notes
+
+    def add_note(self, userid, title, data):
+        self.cursor.execute("""INSERT INTO notes(userid, note_title, note_data)
+                                VALUES(?,?,?)""", (userid, title, data))
+        self.connection.commit()
+
+    def edit_note(self, note_id, new_text):
+        self.cursor.execute("UPDATE notes SET note_data=? WHERE noteid=?", (new_text, note_id))
+        self.connection.commit()
 
     def add_user(self, user, password):
         try:
@@ -37,6 +47,10 @@ class Database:
             return False
         return True
 
-    def delete_users(self, user_to_delete):
-        self.cursor.execute("""DELETE FROM users WHERE username=?""", (user_to_delete,))
+    def delete_user(self, userid):
+        self.cursor.execute("DELETE FROM users WHERE userid=?", (userid,))
+        self.connection.commit()
+
+    def delete_notes(self, userid):
+        self.cursor.execute("DELETE FROM notes WHERE userid=?", (userid,))
         self.connection.commit()

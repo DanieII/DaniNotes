@@ -143,7 +143,7 @@ class MainWindow(Screen):
         content.add_widget(Label(text="Are you sure you want to delete this account?\nThis action is permanent!!!"))
         popup = Popup(title='Confirmation', title_size=30,
                       title_align='center', content=content,
-                      size_hint=(None, None), size=(400, 400))
+                      size_hint=(None, None), size=(600, 500))
         content.add_widget(Button(text="yes", on_release=lambda x: delete_account(popup)))
         content.add_widget(Button(text="no", on_release=popup.dismiss))
         popup.open()

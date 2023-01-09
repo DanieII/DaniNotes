@@ -3,8 +3,6 @@
     create_password: password
 
     FloatLayout:
-
-
         Label:
             pos_hint:{"x":0.3,"y":0.75}
             size_hint: 0.4, 0.1
@@ -12,7 +10,6 @@
             font_size: 25
             text: "Create an account"
             color: 0.3,0.3,0.3,1
-
         Label:
             pos_hint:{"x":0,"top":0.7}
             size_hint: 0.4, 0.1
@@ -21,13 +18,11 @@
             italic: True
             text:"Name"
             color: 0.3,0.3,0.3,1
-
         TextInput:
             pos_hint: {"x":0.3, "top":0.7}
             size_hint: 0.4, 0.12
             id: name
             multiline: False
-
         Label:
             pos_hint:{"x":0,"top":0.5}
             size_hint: 0.4, 0.1
@@ -36,14 +31,12 @@
             italic: True
             text:"Password"
             color: 0.3,0.3,0.3,1
-
         TextInput:
             pos_hint: {"x":0.3, "top":0.5}
             size_hint: 0.4, 0.12
             id: password
             multiline: False
             password: True
-
         Button:
             pos_hint:{"x":0.3,"y":0.15}
             size_hint: 0.4, 0.1
@@ -52,7 +45,6 @@
             on_release:
                 root.manager.transition.direction = "left"
                 root.submit_info()
-
         Button:
             pos_hint:{"x":0.3,"y":0.02}
             size_hint: 0.4, 0.1
@@ -71,7 +63,6 @@
         Image:
             source: "hjga.png"
             pos_hint:{"x":-0.02,"y":0.35}
-
         Label:
             pos_hint:{"x":0,"top":0.7}
             size_hint: 0.4, 0.1
@@ -80,13 +71,11 @@
             italic: True
             text:"Name"
             color: 0.3,0.3,0.3,1
-
         TextInput:
             pos_hint: {"x":0.3, "top":0.7}
             size_hint: 0.4, 0.12
             id: name
             multiline: False
-
         Label:
             pos_hint:{"x":0,"top":0.5}
             size_hint: 0.4, 0.1
@@ -95,14 +84,12 @@
             italic: True
             text:"Password"
             color: 0.3,0.3,0.3,1
-
         TextInput:
             pos_hint: {"x":0.3, "top":0.5}
             size_hint: 0.4, 0.12
             id: password
             multiline: False
             password: True
-
         Button:
             pos_hint:{"x":0.3,"y":0.15}
             size_hint: 0.4, 0.1
@@ -111,7 +98,6 @@
             on_release:
                 root.manager.transition.direction = "down"
                 root.submit_info()
-
         Button:
             pos_hint:{"x":0.3,"y":0.02}
             size_hint: 0.4, 0.1
@@ -163,7 +149,6 @@
 
     GridLayout:
         rows: 3
-        spacing: 3
         BoxLayout:
             orientation: "vertical"
             Button:
@@ -185,8 +170,8 @@
                     cols: 1
                     row_default_height: '50dp'
                     row_force_default: True
-                    spacing: 0, 0
-                    padding: 0, 10
+                    spacing: 0, 1
+                    padding: 300, 20
                     id: scroll
         Button:
             size_hint_y: 0.15
@@ -198,4 +183,4 @@
             size_hint_y: 0.15
             text: "Delete Account"
             on_release:
-                root.delete_account()
+                root.delete_account_popup()

@@ -121,11 +121,13 @@ class MainWindow(Screen):
         content.add_widget(new_text)
         popup = Popup(title=title, title_size=30,
                       title_align='center', content=content,
-                      size_hint=(None, None), size=(400, 400))
+                      size_hint=(None, None), size=(550, 550))
         content.add_widget(
             Button(text="Save changes",
                    on_press=lambda x: db_functions.edit_note(note_id, new_text.text),
                    on_release=popup.dismiss))
+        content.add_widget(
+            Button(text="Delete", on_release=lambda x: delete_note(popup, note_id)))
         content.add_widget(Button(text="Go back", on_release=popup.dismiss))
         popup.open()
 
@@ -136,24 +138,29 @@ class MainWindow(Screen):
         m.current = "login"
         remove_widgets()
 
-    def delete_account(self):
+    def delete_account_popup(self):
         content = BoxLayout(orientation="vertical")
         content.add_widget(Label(text="Are you sure you want to delete this account?\nThis action is permanent!!!"))
         popup = Popup(title='Confirmation', title_size=30,
                       title_align='center', content=content,
                       size_hint=(None, None), size=(400, 400))
-        content.add_widget(Button(text="yes", on_release=lambda x: do_it(popup)))
+        content.add_widget(Button(text="yes", on_release=lambda x: delete_account(popup)))
         content.add_widget(Button(text="no", on_release=popup.dismiss))
         popup.open()
         remove_widgets()
 
 
-def do_it(popup):
+def delete_account(popup):
     popup.dismiss()
     db_functions.delete_user(current_id)
-    db_functions.delete_notes(current_id)
     m.transition.direction = "up"
     m.current = "login"
+
+
+def delete_note(popup, noteid):
+    popup.dismiss()
+    db_functions.delete_note(noteid)
+    already_loaded_notes_ids.clear()
 
 
 def remove_widgets():
@@ -164,12 +171,11 @@ def remove_widgets():
 
 def show_popup(title, content):
     popup = Popup(title=title, content=Label(text=content), title_size=30,
-                  title_align='center', size_hint=(None, None), size=(400, 400))
+                  title_align='center', size_hint=(None, None), size=(450, 450))
     popup.open()
 
 
 def password_validator(passwd):
-    # A valid string is a string containing at least 5 characters, 1 digit, 1 lowercase and 1 uppercase
     pattern = "(?=^.{5,}$)(?=.*\d)(?=.*[a-z])(?=.*[A-Z])"
     result = re.match(pattern, passwd)
     if result:

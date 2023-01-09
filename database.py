@@ -38,6 +38,10 @@ class Database:
         self.cursor.execute("UPDATE notes SET note_data=? WHERE noteid=?", (new_text, note_id))
         self.connection.commit()
 
+    def delete_note(self, noteid):
+        self.cursor.execute("DELETE FROM notes WHERE noteid=?", (noteid,))
+        self.connection.commit()
+
     def add_user(self, user, password):
         try:
             self.cursor.execute("""INSERT INTO users(username,password)
@@ -49,8 +53,5 @@ class Database:
 
     def delete_user(self, userid):
         self.cursor.execute("DELETE FROM users WHERE userid=?", (userid,))
-        self.connection.commit()
-
-    def delete_notes(self, userid):
         self.cursor.execute("DELETE FROM notes WHERE userid=?", (userid,))
         self.connection.commit()

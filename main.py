@@ -12,6 +12,7 @@ from kivy.core.window import Window
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 from database import Database
+from hashlib import sha256
 import re
 
 db_functions = Database()
@@ -27,7 +28,8 @@ class CreateWindow(Screen):
         name, password = self.create_name.text, self.create_password.text
         if name != "" and len(name) >= 3:
             if password != "" and password_validator(password):
-                result = db_functions.add_user(name, password)
+                password_after_hashing = get_hashed(password)
+                result = db_functions.add_user(name, password_after_hashing)
                 if result:
                     show_popup("Congratulations",
                                "The account has been created.\nYou can now login")
@@ -54,11 +56,12 @@ class LoginWindow(Screen):
     login_password = ObjectProperty(None)
 
     def submit_info(self):
-        name, password = self.login_name.text, self.login_password
+        name, password = self.login_name.text, self.login_password.text
         if name != "" and password != "":
             result_for_the_given_name = list(db_functions.get_user_data(name))
             if result_for_the_given_name:
-                if password.text == result_for_the_given_name[0][2]:
+                password_after_hashing = get_hashed(password)
+                if password_after_hashing == result_for_the_given_name[0][2]:
                     m.current = "main"
                     self.login_name.text, self.login_password.text = "", ""
                     global current_id, current_name
@@ -181,6 +184,11 @@ def password_validator(passwd):
     if result:
         return True
     return False
+
+
+def get_hashed(password):
+    hash = sha256(password.encode())
+    return str(hash.hexdigest())
 
 
 class Manager(ScreenManager):
